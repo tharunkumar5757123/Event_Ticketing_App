@@ -38,13 +38,22 @@ const purchaseTicket = async (req, res) => {
 // Get logged-in user's tickets
 const getMyTickets = async (req, res) => {
   try {
+    console.log("🔍 Incoming request from user:", req.user);
+
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "Unauthorized: user not found in request" });
+    }
+
     const userId = req.user._id;
     const tickets = await Ticket.find({ user: userId }).populate("event");
+
+    console.log("✅ Tickets found:", tickets.length);
     res.status(200).json({ tickets });
   } catch (error) {
-    console.log(error);
+    console.error("❌ getMyTickets error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 module.exports = { purchaseTicket, getMyTickets };
