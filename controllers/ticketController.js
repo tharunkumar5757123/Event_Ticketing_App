@@ -2,6 +2,7 @@ const QRCode = require("qrcode");
 const Ticket = require("../models/ticketModel.js");
 const Event = require("../models/eventModel.js");
 const { sendTicketEmail } = require("./eamilController.js");
+const { create } = require("../models/userModel.js");
 
 // Purchase ticket
 const purchaseTicket = async (req, res) => {
@@ -47,9 +48,12 @@ const getMyTickets = async (req, res) => {
     if (!req.user || !req.user._id) {
       return res.status(401).json({ message: "Unauthorized: user not found in request" });
     }
+    console.log("🔐 Role check:", req.user.role);
+    console.log("✅ Allowed roles: user, admin, host");
+
 
     const userId = req.user._id;
-    const tickets = await Ticket.find({ user: userId }).populate("event");
+    const tickets = await Ticket.find({ user: userId }).populate("event").sort({createdAt:-1});
 
     console.log("✅ Tickets found:", tickets.length);
     res.status(200).json({ tickets });

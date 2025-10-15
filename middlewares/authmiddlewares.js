@@ -29,7 +29,8 @@ const authorization = (...roles) => {
     if (!req.user || !req.user.role) {
       return res.status(403).json({ message: "User not found or role missing" });
     }
-
+    console.log("role check",req.user.role);
+    console.log("allowed roles",roles)
     const checkRole = roles.includes(req.user.role);
     if (checkRole) {
       next();
