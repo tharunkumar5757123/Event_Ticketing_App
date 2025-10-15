@@ -5,13 +5,13 @@ const {UsersModel} = require("../models/userModel.js")
 const authentication = async (req, res, next) => {
 
   const { authorization } = req.headers;
-  if(!authorization){
+  if(!authorization|| !authorization.startsWith("Bearer ")){
     return res.status(400).json({message:"Token not there"}) 
   }
   const token = authorization.split(" ")[1];
   try {
     const decodeToken = jwt.verify(token, process.env.jwt_secret_key);
-    const checkuser = await UsersModel.findById(decodeToken.id, {_id:true, name:true, email:true})
+    const checkuser = await UsersModel.findById(decodeToken._id, {_id:true, name:true, email:true,role:true})
     if(checkuser){
       req.user = checkuser
       next();
@@ -31,7 +31,7 @@ const authorization = (...roles) => {
       if (!user) {
         return res.status(403).json({ message: "User not found" });
       }
-      const checkRole = roles.includes(user.role);
+      const checkRole = roles.includes(req.user.role);
       if (checkRole) {
         next();
       } else {
