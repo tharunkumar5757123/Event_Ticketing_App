@@ -25,21 +25,16 @@ const authentication = async (req, res, next) => {
 };
 
 const authorization = (...roles) => {
-  return async (req, res, next) => {
-    try {
-      const user = await UsersModel.findById(req.user._id, { role: true }); // <-- fix here
-      if (!user) {
-        return res.status(403).json({ message: "User not found" });
-      }
-      const checkRole = roles.includes(req.user.role);
-      if (checkRole) {
-        next();
-      } else {
-        res.status(403).json({ message: "Access denied" });
-      }
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: error.message });
+  return (req, res, next) => {
+    if (!req.user || !req.user.role) {
+      return res.status(403).json({ message: "User not found or role missing" });
+    }
+
+    const checkRole = roles.includes(req.user.role);
+    if (checkRole) {
+      next();
+    } else {
+      res.status(403).json({ message: "Access denied" });
     }
   };
 };

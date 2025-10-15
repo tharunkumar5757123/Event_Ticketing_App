@@ -25,6 +25,6 @@ router.post(
 );
 
 // Get logged-in user's tickets
-router.get("/mytickets", authentication, authorization("user"), getMyTickets);
+router.get("/mytickets", authentication, authorization("user","admin","host"), getMyTickets);
 
 module.exports = router;

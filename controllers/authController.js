@@ -5,20 +5,20 @@ require("dotenv").config();
 
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
-  const checkEmail = await UsersModel.find({ email: email });
-  if (checkEmail.length > 0) {
+  const checkEmail = await UsersModel.findOne({ email: email });
+  if (checkEmail) {
     res.status(400).json({ message: "email already exist" });
   } else {
     const hashPassword = await bcryptjs.hash(password, 14);
-    const adduser = await UsersModel.insertOne({
+    const adduser = new UsersModel({
       name: name,
       email: email,
       password: hashPassword,
       role: req.body.role || "user"
     });
-    adduser.save();
+    await adduser.save();
 
-    const userData = await UsersModel.find(
+    const userData = await UsersModel.findOne(
       { email: email },
       { __v: false, password: false, createdAt: false, updatedAt: false }
     );
