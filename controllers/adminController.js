@@ -1,9 +1,9 @@
-const {UsersModel} = require("../models/userModel.js");
-const {Event} = require("../models/eventModel.js");
+const User = require("../models/userModel.js");
+const Event = require("../models/eventModel.js");
 // ✅ Get all users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await UsersModel.find().select("-password -__v -createdAt -updatedAt");
+    const users = await User.find().select("-password -__v -createdAt -updatedAt");
     res.status(200).json({ success: true, users });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -13,7 +13,7 @@ const getAllUsers = async (req, res) => {
 // ✅ Delete a user
 const deleteUser = async (req, res) => {
   try {
-    const user = await UsersModel.findById(req.params.id);
+    const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     await user.remove();

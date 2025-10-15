@@ -21,10 +21,15 @@ router.post(
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
     next();
   },
-  purchaseTicket
+  purchaseTicket // make sure this is a valid function
 );
 
 // Get logged-in user's tickets
-router.get("/mytickets", authentication, authorization("user","admin","host"), getMyTickets);
+router.get(
+  "/mytickets",
+  authentication,
+  authorization("user", "admin", "host"),
+  getMyTickets // make sure this is a valid function
+);
 
 module.exports = router;

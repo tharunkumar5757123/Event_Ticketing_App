@@ -1,4 +1,4 @@
-const {Event} = require("../models/eventModel.js");
+const Event = require("../models/eventModel.js");
 
 // ✅ Create Event (Host/Admin only)
 const createEvent = async (req, res) => {

@@ -1,7 +1,7 @@
-const {Event} = require("../models/eventModel.js");
-const {Ticket} = require("../models/ticketModel.js");
-const {ScanLog}= require("../models/scanLogModel.js");
-const {User} = require("../models/userModel.js");
+const Event = require("../models/eventModel.js");
+const Ticket = require("../models/ticketModel.js");
+const TicketScan= require("../models/scanLogModel.js");
+const User = require("../models/userModel.js");
 
 // ✅ Get stats for a specific host (their events)
 const getHostStats = async (req, res) => {
@@ -20,7 +20,7 @@ const getHostStats = async (req, res) => {
           isScanned: true,
         });
 
-        const scanLogs = await ScanLog.find({ ticket: { $in: (await Ticket.find({ event: event._id })).map(t => t._id) } }).populate("scannedBy", "name email");
+        const scanLogs = await TicketScan.find({ ticket: { $in: (await Ticket.find({ event: event._id })).map(t => t._id) } }).populate("scannedBy", "name email");
 
         return {
           eventId: event._id,

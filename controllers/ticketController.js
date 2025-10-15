@@ -1,13 +1,14 @@
 const QRCode = require("qrcode");
 const Ticket = require("../models/ticketModel.js");
 const Event = require("../models/eventModel.js");
-const { sendTicketEmail } = require("./eamilController.js"); // fixed filename
+const { sendTicketEmail } = require("./eamilController.js");
 
 // Purchase ticket
 const purchaseTicket = async (req, res) => {
   try {
     const { eventId } = req.body;
     const userId = req.user._id;
+    const userEmail = req.user.email;
 
     // 1️⃣ Check if event exists
     const event = await Event.findById(eventId);
@@ -17,17 +18,20 @@ const purchaseTicket = async (req, res) => {
     const qrCodeData = await QRCode.toDataURL(`${userId}_${eventId}_${Date.now()}`);
 
     // 3️⃣ Create ticket
-    const ticket = await Ticket.create({
+    let ticket = await Ticket.create({
       event: event._id,
       user: userId,
       qrCodeData,
       isScanned: false,
     });
 
-    // 4️⃣ Send ticket email
-    await sendTicketEmail(req.user.email, ticket);
+    // 4️⃣ Populate event so email can show details
+    ticket = await ticket.populate("event");
 
-    // 5️⃣ Respond
+    // 5️⃣ Send ticket email
+    await sendTicketEmail(userEmail, ticket);
+
+    // 6️⃣ Respond
     res.status(200).json({ message: "Ticket purchased successfully", ticket });
   } catch (error) {
     console.log(error);
@@ -35,7 +39,7 @@ const purchaseTicket = async (req, res) => {
   }
 };
 
-// Get logged-in user's tickets
+
 const getMyTickets = async (req, res) => {
   try {
     console.log("🔍 Incoming request from user:", req.user);
@@ -55,5 +59,4 @@ const getMyTickets = async (req, res) => {
   }
 };
 
-
-module.exports = { purchaseTicket, getMyTickets };
+module.exports={purchaseTicket,getMyTickets}

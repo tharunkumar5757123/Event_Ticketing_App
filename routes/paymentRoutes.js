@@ -1,9 +1,12 @@
 const express = require("express");
-const { createPaymentIntent } = require("../controllers/paymentController.js");
-const { authentication, authorization } = require("../middlewares/authmiddlewares.js");
-
 const router = express.Router();
+const { authentication, authorization } = require("../middlewares/authmiddlewares.js");
+const { createPaymentIntent, handlePaymentSuccess } = require("../controllers/paymentController.js");
 
-router.post("/create-payment-intent", authentication, authorization("user"), createPaymentIntent);
+// Create payment intent (for frontend Stripe)
+router.post("/create", authentication, authorization("user"), createPaymentIntent);
+
+// Confirm payment & issue ticket
+router.post("/confirm", authentication, authorization("user"), handlePaymentSuccess);
 
 module.exports = router;

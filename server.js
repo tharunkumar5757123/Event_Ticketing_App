@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
 require("dotenv").config();
-const port = process.env.PORT || 8080; // use uppercase PORT for safety
+const port = process.env.PORT || 8080;
 const { connectDB } = require("./config/db.js");
 const cors = require("cors");
 const http = require("http");
+const { Server } = require("socket.io");
+
 
 // Routes
 const authRoutes = require("./routes/authRoutes.js");
@@ -25,8 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // HTTP server + Socket.io
 const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, { cors: { origin: "*" } }); // ✅ only once
 
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
@@ -36,10 +37,7 @@ io.on("connection", (socket) => {
 });
 
 // Routes
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
+app.get("/", (req, res) => res.send("Hello World"));
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/tickets", ticketRoutes);
@@ -48,12 +46,9 @@ app.use("/api/stats", statsRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/payment", paymentRoutes);
 
-// 404 Handler (always last)
+// 404 Handler
 app.use((req, res, next) => {
-  res.status(404).json({
-    message: "Endpoint not found",
-    status: 404,
-  });
+  res.status(404).json({ message: "Endpoint not found", status: 404 });
 });
 
 // Start server
@@ -61,4 +56,4 @@ server.listen(port, () => {
   console.log("Server started on port " + port);
 });
 
-module.exports = { app, io };
+module.exports = { app, io }; // ✅ export io for other modules

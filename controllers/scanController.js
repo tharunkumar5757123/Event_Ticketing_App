@@ -1,5 +1,5 @@
-const {Ticket} = require("../models/ticketModel.js");
-const ScanLog = require("../models/scanLogModel.js");
+const Ticket = require("../models/ticketModel.js");
+const TicketScan = require("../models/scanLogModel.js");
 const { io } = require("../server.js");
 
 const scanTicket = async (req, res) => {
@@ -16,7 +16,7 @@ const scanTicket = async (req, res) => {
     await ticket.save();
 
     // Log the scan
-    await ScanLog.create({
+    await TicketScan.create({
       ticket: ticket._id,
       scannedBy: userId,
       scannedAt: new Date(),

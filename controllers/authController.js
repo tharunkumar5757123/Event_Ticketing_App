@@ -1,16 +1,16 @@
-const { UsersModel } = require("../models/userModel.js");
+const User= require("../models/userModel.js");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
-  const checkEmail = await UsersModel.findOne({ email: email });
+  const checkEmail = await User.findOne({ email: email });
   if (checkEmail) {
     res.status(400).json({ message: "email already exist" });
   } else {
     const hashPassword = await bcryptjs.hash(password, 14);
-    const adduser = new UsersModel({
+    const adduser = new User({
       name: name,
       email: email,
       password: hashPassword,
@@ -18,7 +18,7 @@ const signup = async (req, res) => {
     });
     await adduser.save();
 
-    const userData = await UsersModel.findOne(
+    const userData = await User.findOne(
       { email: email },
       { __v: false, password: false, createdAt: false, updatedAt: false }
     );
@@ -34,7 +34,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const checkUser = await UsersModel.findOne({ email: email });
+    const checkUser = await User.findOne({ email: email });
 
     if (checkUser) {
       console.log(checkUser);
@@ -68,7 +68,7 @@ const login = async (req, res) => {
 
 const getProfile = async(req, res) => {
   try {
-      const user = await UsersModel.findOne({_id:req.user._id}, {password:false})
+      const user = await User.findOne({_id:req.user._id}, {password:false})
       res.json(user)
   } catch (error) {
     res.status(400).json({message:"Internal server error"})

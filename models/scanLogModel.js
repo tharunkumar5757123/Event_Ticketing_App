@@ -9,7 +9,7 @@ const ticketScanSchema = new mongoose.Schema(
     },
     scannedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // or "Host" if you have a separate Host model
+      ref: "User", // matches your User model
       required: true,
     },
     scannedAt: {
@@ -18,10 +18,9 @@ const ticketScanSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // adds createdAt, updatedAt automatically
+    timestamps: true, // adds createdAt & updatedAt automatically
   }
 );
 
-const TicketScanModel = mongoose.model("TicketScan", ticketScanSchema);
-
-module.exports = { TicketScanModel };
+// ✅ Export the model directly
+module.exports = mongoose.model("TicketScan", ticketScanSchema);

@@ -6,6 +6,6 @@ const { authentication, authorization } = require("../middlewares/authmiddleware
 const router = express.Router();
 
 // Scan QR code (host/admin)
-router.post("/", authentication, authorization("host","admin"), scanTicket);
+router.post("/", authentication, authorization("host","admin","user"), scanTicket);
 
 module.exports = router;
